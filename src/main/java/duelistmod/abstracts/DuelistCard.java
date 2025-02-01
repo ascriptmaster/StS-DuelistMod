@@ -6041,25 +6041,7 @@ public abstract class DuelistCard extends CustomCard implements CustomSavable <S
 
 	public static boolean checkForUpgradeResummon(AbstractCard resummonedCard)
 	{
-		boolean amtInc = true;
-		AbstractPlayer p = AbstractDungeon.player;
-		for (AbstractPotion pot : p.potions) { if (pot instanceof DuelistPotion) { amtInc = ((DuelistPotion)pot).upgradeResummon(resummonedCard); if (!amtInc) { return false; }}}
-		for (AbstractRelic r : p.relics) { if (r instanceof DuelistRelic) { amtInc = ((DuelistRelic)r).upgradeResummon(resummonedCard); if (!amtInc) { return false; }}}
-		for (AbstractOrb o : p.orbs) { if (o instanceof DuelistOrb) {  amtInc = ((DuelistOrb)o).upgradeResummon(resummonedCard); if (!amtInc) { return false; }}}
-		for (AbstractPower pow : p.powers) { if (pow instanceof DuelistPower) { amtInc = ((DuelistPower)pow).upgradeResummon(resummonedCard); if (!amtInc) { return false; }}}
-		for (AbstractCard c : p.hand.group) { if (c instanceof DuelistCard) { amtInc = ((DuelistCard)c).upgradeResummonWhileInHand(resummonedCard); if (!amtInc) { return false; }}}
-		for (AbstractCard c : p.discardPile.group) { if (c instanceof DuelistCard) { amtInc = ((DuelistCard)c).upgradeResummonWhileInDiscard(resummonedCard); if (!amtInc) { return false; }}}
-		for (AbstractCard c : p.drawPile.group) { if (c instanceof DuelistCard) { amtInc = ((DuelistCard)c).upgradeResummonWhileInDraw(resummonedCard); if (!amtInc) { return false; }}}
-		for (AbstractCard c : p.exhaustPile.group) { if (c instanceof DuelistCard) { amtInc = ((DuelistCard)c).upgradeResummonWhileInExhaust(resummonedCard); if (!amtInc) { return false; }}}
-		for (AbstractCard c : TheDuelist.resummonPile.group) { if (c instanceof DuelistCard) { amtInc = ((DuelistCard)c).upgradeResummonWhileInGraveyard(resummonedCard); if (!amtInc) { return false; }}}
-		if (player().hasPower(SummonPower.POWER_ID)) {
-			SummonPower pow = (SummonPower)player().getPower(SummonPower.POWER_ID);
-			for (DuelistCard c : pow.getCardsSummoned()) {
-				amtInc = c.upgradeResummonWhileSummoned(resummonedCard);
-				if (!amtInc) { return false; }
-			}
-		}
-		return amtInc;
+		return checkForUpgradeResummonAnyDuelist(resummonedCard, AnyDuelist.from(player()));
 	}
 
 	public static boolean allowResummonsAnyDuelist(AbstractCard resummonedCard, AnyDuelist p) {
@@ -6088,100 +6070,26 @@ public abstract class DuelistCard extends CustomCard implements CustomSavable <S
 
 	public static boolean allowResummons(AbstractCard resummonedCard)
 	{
-		if (resummonedCard.type.equals(CardType.CURSE) || resummonedCard.type.equals(CardType.STATUS)) { return false; }
-		boolean amtInc;
-		AbstractPlayer p = AbstractDungeon.player;
-		for (AbstractPotion pot : p.potions) { if (pot instanceof DuelistPotion) { amtInc = ((DuelistPotion)pot).allowResummon(resummonedCard); if (!amtInc) { return false; }}}
-		for (AbstractRelic r : p.relics) { if (r instanceof DuelistRelic) { amtInc = ((DuelistRelic)r).allowResummon(resummonedCard); if (!amtInc) { return false; }}}
-		for (AbstractOrb o : p.orbs) { if (o instanceof DuelistOrb) {  amtInc = ((DuelistOrb)o).allowResummon(resummonedCard); if (!amtInc) { return false; }}}
-		for (AbstractPower pow : p.powers) { if (pow instanceof DuelistPower) { amtInc = ((DuelistPower)pow).allowResummon(resummonedCard); if (!amtInc) { return false; }}}
-		for (AbstractCard c : p.hand.group) { if (c instanceof DuelistCard) { amtInc = ((DuelistCard)c).allowResummonWhileInHand(resummonedCard); if (!amtInc) { return false; }}}
-		for (AbstractCard c : p.discardPile.group) { if (c instanceof DuelistCard) { amtInc = ((DuelistCard)c).allowResummonWhileInDiscard(resummonedCard); if (!amtInc) { return false; }}}
-		for (AbstractCard c : p.drawPile.group) { if (c instanceof DuelistCard) { amtInc = ((DuelistCard)c).allowResummonWhileInDraw(resummonedCard); if (!amtInc) { return false; }}}
-		for (AbstractCard c : p.exhaustPile.group) { if (c instanceof DuelistCard) { amtInc = ((DuelistCard)c).allowResummonWhileInExhaust(resummonedCard); if (!amtInc) { return false; }}}
-		for (AbstractCard c : TheDuelist.resummonPile.group) { if (c instanceof DuelistCard) { amtInc = ((DuelistCard)c).allowResummonWhileInGraveyard(resummonedCard); if (!amtInc) { return false; }}}
-		if (player().hasPower(SummonPower.POWER_ID)) {
-			SummonPower pow = (SummonPower)player().getPower(SummonPower.POWER_ID);
-			for (DuelistCard c : pow.getCardsSummoned()) {
-				amtInc = c.allowResummonWhileSummoned(resummonedCard);
-				if (!amtInc) {
-					return false;
-				}
-			}
-		}
-		return true;
+		return allowResummonsAnyDuelist(resummonedCard, AnyDuelist.from(player()));
 	}
 
 	public static boolean allowResummonsRevive(AbstractCard resummonedCard)
 	{
-		if (resummonedCard.type.equals(CardType.CURSE) || resummonedCard.type.equals(CardType.STATUS)) { return false; }
-		boolean amtInc;
-		AbstractPlayer p = AbstractDungeon.player;
 		if (Util.isExempt(resummonedCard)) { return false; }
-		for (AbstractPotion pot : p.potions) { if (pot instanceof DuelistPotion) { amtInc = ((DuelistPotion)pot).allowResummon(resummonedCard); if (!amtInc) { return false; }}}
-		for (AbstractRelic r : p.relics) { if (r instanceof DuelistRelic) { amtInc = ((DuelistRelic)r).allowResummon(resummonedCard); if (!amtInc) { return false; }}}
-		for (AbstractOrb o : p.orbs) { if (o instanceof DuelistOrb) {  amtInc = ((DuelistOrb)o).allowResummon(resummonedCard); if (!amtInc) { return false; }}}
-		for (AbstractPower pow : p.powers) { if (pow instanceof DuelistPower) { amtInc = ((DuelistPower)pow).allowResummon(resummonedCard); if (!amtInc) { return false; }}}
-		for (AbstractCard c : p.hand.group) { if (c instanceof DuelistCard) { amtInc = ((DuelistCard)c).allowResummonWhileInHand(resummonedCard); if (!amtInc) { return false; }}}
-		for (AbstractCard c : p.discardPile.group) { if (c instanceof DuelistCard) { amtInc = ((DuelistCard)c).allowResummonWhileInDiscard(resummonedCard); if (!amtInc) { return false; }}}
-		for (AbstractCard c : p.drawPile.group) { if (c instanceof DuelistCard) { amtInc = ((DuelistCard)c).allowResummonWhileInDraw(resummonedCard); if (!amtInc) { return false; }}}
-		for (AbstractCard c : p.exhaustPile.group) { if (c instanceof DuelistCard) { amtInc = ((DuelistCard)c).allowResummonWhileInExhaust(resummonedCard); if (!amtInc) { return false; }}}
-		for (AbstractCard c : TheDuelist.resummonPile.group) { if (c instanceof DuelistCard) { amtInc = ((DuelistCard)c).allowResummonWhileInGraveyard(resummonedCard); if (!amtInc) { return false; }}}
-		if (player().hasPower(SummonPower.POWER_ID)) {
-			SummonPower pow = (SummonPower)player().getPower(SummonPower.POWER_ID);
-			for (DuelistCard c : pow.getCardsSummoned()) { amtInc = c.allowResummonWhileSummoned(resummonedCard); if (!amtInc) { return false; }}
-		}
-		return true;
+		return allowResummons(resummonedCard);
 	}
 
 	public static boolean allowResummonsWithExtraChecks(AbstractCard resummonedCard)
 	{
-		if (resummonedCard.type.equals(CardType.CURSE) || resummonedCard.type.equals(CardType.STATUS)) { return false; }
-		boolean amtInc;
-		AbstractPlayer p = AbstractDungeon.player;
 		if (Util.isExempt(resummonedCard)) { return false; }
 		if (resummonedCard.hasTag(Tags.ZOMBIE)) { int loss = 1; if (DuelistMod.bookEclipseThisCombat) { loss = 2; }if (!Util.checkSouls(loss)) { return false; }}
-		for (AbstractPotion pot : p.potions) { if (pot instanceof DuelistPotion) { amtInc = ((DuelistPotion)pot).allowResummon(resummonedCard); if (!amtInc) { return false; }}}
-		for (AbstractRelic r : p.relics) { if (r instanceof DuelistRelic) { amtInc = ((DuelistRelic)r).allowResummon(resummonedCard); if (!amtInc) { return false; }}}
-		for (AbstractOrb o : p.orbs) { if (o instanceof DuelistOrb) {  amtInc = ((DuelistOrb)o).allowResummon(resummonedCard); if (!amtInc) { return false; }}}
-		for (AbstractPower pow : p.powers) { if (pow instanceof DuelistPower) { amtInc = ((DuelistPower)pow).allowResummon(resummonedCard); if (!amtInc) { return false; }}}
-		for (AbstractCard c : p.hand.group) { if (c instanceof DuelistCard) { amtInc = ((DuelistCard)c).allowResummonWhileInHand(resummonedCard); if (!amtInc) { return false; }}}
-		for (AbstractCard c : p.discardPile.group) { if (c instanceof DuelistCard) { amtInc = ((DuelistCard)c).allowResummonWhileInDiscard(resummonedCard); if (!amtInc) { return false; }}}
-		for (AbstractCard c : p.drawPile.group) { if (c instanceof DuelistCard) { amtInc = ((DuelistCard)c).allowResummonWhileInDraw(resummonedCard); if (!amtInc) { return false; }}}
-		for (AbstractCard c : p.exhaustPile.group) { if (c instanceof DuelistCard) { amtInc = ((DuelistCard)c).allowResummonWhileInExhaust(resummonedCard); if (!amtInc) { return false; }}}
-		for (AbstractCard c : TheDuelist.resummonPile.group) { if (c instanceof DuelistCard) { amtInc = ((DuelistCard)c).allowResummonWhileInGraveyard(resummonedCard); if (!amtInc) { return false; }}}
-		if (player().hasPower(SummonPower.POWER_ID)) {
-			SummonPower pow = (SummonPower)player().getPower(SummonPower.POWER_ID);
-			for (DuelistCard c : pow.getCardsSummoned()) { amtInc = (c).allowResummonWhileSummoned(resummonedCard); if (!amtInc) { return false; }}
-		}
-		return true;
+		return allowResummons(resummonedCard);
 	}
 
 	public static boolean allowResummonsSkipOnlyExempt(AbstractCard resummonedCard)
 	{
-		if (resummonedCard.type.equals(CardType.CURSE) || resummonedCard.type.equals(CardType.STATUS)) { return false; }
-		boolean amtInc;
-		AbstractPlayer p = AbstractDungeon.player;
 		if (resummonedCard.hasTag(Tags.ZOMBIE)) { int loss = 1; if (DuelistMod.bookEclipseThisCombat) { loss = 2; }if (!Util.checkSouls(loss)) { return false; }}
-		for (AbstractPotion pot : p.potions) { if (pot instanceof DuelistPotion) { amtInc = ((DuelistPotion)pot).allowResummon(resummonedCard); if (!amtInc) { return false; }}}
-		for (AbstractRelic r : p.relics) { if (r instanceof DuelistRelic) { amtInc = ((DuelistRelic)r).allowResummon(resummonedCard); if (!amtInc) { return false; }}}
-		for (AbstractOrb o : p.orbs) { if (o instanceof DuelistOrb) {  amtInc = ((DuelistOrb)o).allowResummon(resummonedCard); if (!amtInc) { return false; }}}
-		for (AbstractPower pow : p.powers) { if (pow instanceof DuelistPower) { amtInc = ((DuelistPower)pow).allowResummon(resummonedCard); if (!amtInc) { return false; }}}
-		for (AbstractCard c : p.hand.group) { if (c instanceof DuelistCard) { amtInc = ((DuelistCard)c).allowResummonWhileInHand(resummonedCard); if (!amtInc) { return false; }}}
-		for (AbstractCard c : p.discardPile.group) { if (c instanceof DuelistCard) { amtInc = ((DuelistCard)c).allowResummonWhileInDiscard(resummonedCard); if (!amtInc) { return false; }}}
-		for (AbstractCard c : p.drawPile.group) { if (c instanceof DuelistCard) { amtInc = ((DuelistCard)c).allowResummonWhileInDraw(resummonedCard); if (!amtInc) { return false; }}}
-		for (AbstractCard c : p.exhaustPile.group) { if (c instanceof DuelistCard) { amtInc = ((DuelistCard)c).allowResummonWhileInExhaust(resummonedCard); if (!amtInc) { return false; }}}
-		for (AbstractCard c : TheDuelist.resummonPile.group) { if (c instanceof DuelistCard) { amtInc = ((DuelistCard)c).allowResummonWhileInGraveyard(resummonedCard); if (!amtInc) { return false; }}}
-		if (player().hasPower(SummonPower.POWER_ID)) {
-			SummonPower pow = (SummonPower)player().getPower(SummonPower.POWER_ID);
-			for (DuelistCard c : pow.getCardsSummoned()) {
-				amtInc = c.allowResummonWhileSummoned(resummonedCard);
-				if (!amtInc) {
-					return false;
-				}
-			}
-		}
-		return true;
+		return allowResummons(resummonedCard);
 	}
 
 	public static int checkResummonIncAnyDuelist(AbstractCard resummonedCard, AnyDuelist p)
@@ -6207,24 +6115,7 @@ public abstract class DuelistCard extends CustomCard implements CustomSavable <S
 
 	public static int checkResummonInc(AbstractCard resummonedCard)
 	{
-		int amtInc = 0;
-		AbstractPlayer p = AbstractDungeon.player;
-		for (AbstractPotion pot : p.potions) { if (pot instanceof DuelistPotion) { amtInc += ((DuelistPotion)pot).modifyResummonAmt(resummonedCard); }}
-		for (AbstractRelic r : p.relics) { if (r instanceof DuelistRelic) { amtInc += ((DuelistRelic)r).modifyResummonAmt(resummonedCard); }}
-		for (AbstractOrb o : p.orbs) { if (o instanceof DuelistOrb) {  amtInc += ((DuelistOrb)o).modifyResummonAmt(resummonedCard); }}
-		for (AbstractPower pow : p.powers) { if (pow instanceof DuelistPower) { amtInc += ((DuelistPower)pow).modifyResummonAmt(resummonedCard); }}
-		for (AbstractCard c : p.hand.group) { if (c instanceof DuelistCard) { amtInc += ((DuelistCard)c).modifyResummonAmtWhileInHand(resummonedCard); }}
-		for (AbstractCard c : p.discardPile.group) { if (c instanceof DuelistCard) { amtInc += ((DuelistCard)c).modifyResummonAmtWhileInDiscard(resummonedCard); }}
-		for (AbstractCard c : p.drawPile.group) { if (c instanceof DuelistCard) { amtInc += ((DuelistCard)c).modifyResummonAmtWhileInDraw(resummonedCard); }}
-		for (AbstractCard c : p.exhaustPile.group) { if (c instanceof DuelistCard) { amtInc += ((DuelistCard)c).modifyResummonAmtWhileInExhaust(resummonedCard); }}
-		for (AbstractCard c : TheDuelist.resummonPile.group) { if (c instanceof DuelistCard) { amtInc += ((DuelistCard)c).modifyResummonAmtWhileInGraveyard(resummonedCard); }}
-		if (player().hasPower(SummonPower.POWER_ID)) {
-			SummonPower pow = (SummonPower)player().getPower(SummonPower.POWER_ID);
-			for (DuelistCard c : pow.getCardsSummoned()) {
-				amtInc += c.modifyResummonAmtWhileSummoned(resummonedCard);
-			}
-		}
-		return amtInc;
+		return checkResummonIncAnyDuelist(resummonedCard, AnyDuelist.from(player()));
 	}
 
 	public static int getCurrentReviveCost()
